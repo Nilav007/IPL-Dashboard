@@ -1,9 +1,10 @@
 package io.anupamnilav.IPL_Dashboard.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import java.time.LocalDate;
-
+@Entity
 public class Match {
     @Id
     private long id;
