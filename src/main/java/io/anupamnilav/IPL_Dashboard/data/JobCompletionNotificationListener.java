@@ -4,6 +4,7 @@ package io.anupamnilav.IPL_Dashboard.data;
 import io.anupamnilav.IPL_Dashboard.model.Match;
 import io.anupamnilav.IPL_Dashboard.model.Team;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -28,13 +30,32 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
     }
 
     @Override
+    @Transactional
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
             log.info("!!! JOB FINISHED! Time to verify the results");
-            List<Object[]> results=em.createQuery("select distinct m.team1,count(*) from match m group by m.team1")
+            Map<String, Team> teamData=new HashMap<>();
+            em.createQuery("select distinct m.team1,count(*) from Match m group by m.team1",Object[].class)
                                      .getResultList()
                                      .stream()
-            Map<String, Team> teamData=new HashMap<>();
+                                     .map(e->new Team((String) e[0],(long) e[1]))
+                                     .forEach(team->teamData.put(team.getTeamName(),team));
+            em.createQuery("select distinct m.team2,count(*) from Match m group by m.team2",Object[].class)
+                    .getResultList()
+                    .stream()
+                    .forEach(e->{
+                        Team team=teamData.get((String)e[0]);
+                        team.setTotalMatches(team.getTotalMatches()+(long)e[1]);
+                    });
+            em.createQuery("select m.matchWinner,count(*) from Match m group by m.matchWinner",Object[].class)
+                    .getResultList()
+                    .stream()
+                    .forEach(e->{
+                        Team team=teamData.get((String)e[0]);
+                        if(team!=null)team.setTotalWins((long)e[1]);
+                    });
+            teamData.values().forEach(team->em.persist(team));
+            teamData.values().forEach(team->System.out.println(team));
         }
     }
 }

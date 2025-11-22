@@ -1,11 +1,14 @@
 package io.anupamnilav.IPL_Dashboard.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class Team {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String teamName;
     private long totalMatches;
@@ -51,4 +54,9 @@ public class Team {
         this.teamName = teamName;
         this.totalMatches=totalMatches;
     }
+    @Override
+    public String toString() {
+        return "Team [teamName=" + teamName + ", totalMatches=" + totalMatches + ", totalWins=" + totalWins + "]";
+    }
+
 }
