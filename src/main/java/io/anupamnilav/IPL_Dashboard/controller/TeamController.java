@@ -1,12 +1,15 @@
 package io.anupamnilav.IPL_Dashboard.controller;
 
 import io.anupamnilav.IPL_Dashboard.model.Team;
+import io.anupamnilav.IPL_Dashboard.repository.MatchRepository;
 import io.anupamnilav.IPL_Dashboard.repository.TeamRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @CrossOrigin
@@ -14,31 +17,19 @@ import java.util.List;
 public class TeamController {
 
     private final TeamRepository teamRepository;
+    private final MatchRepository matchRepository;
 
-    public TeamController(TeamRepository teamRepository) {
+    public TeamController(TeamRepository teamRepository, MatchRepository matchRepository) {
         this.teamRepository = teamRepository;
+        this.matchRepository = matchRepository;
     }
     @CrossOrigin
     @GetMapping("/team/{teamName}")
     public Team getTeam(@PathVariable String teamName) {
-        return this.teamRepository.findByTeamNameIgnoreCase(teamName);
+        Team team= this.teamRepository.findByTeamNameIgnoreCase(teamName);
+        Pageable pageable = (Pageable) PageRequest.of(0,4);
+        team.setMatches(this.matchRepository.getByTeam1OrTeam2OrderByDateDesc(teamName,teamName,pageable));
+        return team;
     }
-    @GetMapping("/teams")
-    public Iterable<Team> getAllTeams() {
-        System.out.println("=== /teams endpoint hit ===");
-        Iterable<Team> teams = teamRepository.findAll();
 
-        // Count teams
-        long count = teamRepository.count();
-        System.out.println("Repository count: " + count);
-
-        int i = 0;
-        for (Team team : teams) {
-            System.out.println("Team " + i + ": " + team);
-            i++;
-        }
-        System.out.println("Total teams iterated: " + i);
-        System.out.println("===========================");
-        return teams;
-    }
 }

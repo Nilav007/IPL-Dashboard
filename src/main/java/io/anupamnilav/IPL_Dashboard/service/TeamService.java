@@ -24,6 +24,13 @@ public class TeamService {
     public void saveTeams() {
         System.out.println("=== TeamService: Saving teams ===");
 
+        // PREVENT DUPLICATES - CHECK IF TEAMS ALREADY EXIST
+        long existingCount = teamRepository.count();
+        if (existingCount > 0) {
+            System.out.println("=== Teams already exist (" + existingCount + "), skipping save ===");
+            return;
+        }
+
         Map<String, Team> teamData = new HashMap<>();
 
         em.createQuery("select distinct m.team1,count(*) from Match m group by m.team1", Object[].class)
