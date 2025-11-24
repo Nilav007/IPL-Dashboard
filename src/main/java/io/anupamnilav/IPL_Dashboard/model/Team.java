@@ -1,9 +1,8 @@
 package io.anupamnilav.IPL_Dashboard.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Team {
@@ -13,6 +12,8 @@ public class Team {
     private String teamName;
     private long totalMatches;
     private long totalWins;
+
+
 
     public Team() {
 
@@ -58,5 +59,4 @@ public class Team {
     public String toString() {
         return "Team [teamName=" + teamName + ", totalMatches=" + totalMatches + ", totalWins=" + totalWins + "]";
     }
-
 }
