@@ -1,17 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
 import { TeamPage } from './pages/TeamPage'
-import { MatchDetailCard } from './components/MatchDetailCard';
-import { MatchSmallCard } from './components/MatchSmallCard';
-
+import {BrowserRouter as Router} from 'react-router-dom'
 function App() {
   return (
     <div className="App">
       <TeamPage/>
-        <MatchDetailCard/>
-        <MatchSmallCard/>
-        <MatchSmallCard/>
-        <MatchSmallCard/>
     </div>
   );
 }

@@ -23,7 +23,10 @@ public class TeamController {
         this.teamRepository = teamRepository;
         this.matchRepository = matchRepository;
     }
-    @CrossOrigin
+    @GetMapping("/teams")
+    public List<Team> getAllTeams() {
+        return this.teamRepository.findAll();
+    }
     @GetMapping("/team/{teamName}")
     public Team getTeam(@PathVariable String teamName) {
         Team team= this.teamRepository.findByTeamNameIgnoreCase(teamName);
