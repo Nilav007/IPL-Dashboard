@@ -15,12 +15,8 @@ export const TeamPage = () => {
                 setLoading(true);
                 setError(null);
 
-                // Use the teamName from URL params, or default to 'Rajasthan Royals'
                 const nameToFetch = teamName || 'Rajasthan Royals';
-
-                // URL encode the team name to handle spaces
                 const encodedName = encodeURIComponent(nameToFetch);
-
                 const response = await fetch(`/team/${encodedName}`);
 
                 if (!response.ok) {
@@ -38,9 +34,8 @@ export const TeamPage = () => {
         };
 
         fetchMatches();
-    }, [teamName]); // Re-fetch when teamName changes
+    }, [teamName]);
 
-    // Loading state
     if (loading) {
         return (
             <div className="TeamPage">
@@ -49,7 +44,6 @@ export const TeamPage = () => {
         );
     }
 
-    // Error state
     if (error) {
         return (
             <div className="TeamPage">
@@ -59,7 +53,6 @@ export const TeamPage = () => {
         );
     }
 
-    // No data state
     if (!team || !team.matches) {
         return (
             <div className="TeamPage">
@@ -72,24 +65,22 @@ export const TeamPage = () => {
         <div className="TeamPage">
             <h1>{team.teamName}</h1>
 
-            {/* Show latest match detail */}
             {team.matches.length > 0 && (
-                <MatchDetailCard match={team.matches[0]} />
+                <MatchDetailCard match={team.matches[0]} teamName={team.teamName} />
             )}
 
-            {/* Show remaining matches */}
             {team.matches.length > 1 && (
                 <div className="match-list">
                     {team.matches.slice(1).map((match, index) => (
                         <MatchSmallCard
                             key={match.id || index}
                             match={match}
+                            teamName={team.teamName}
                         />
                     ))}
                 </div>
             )}
 
-            {/* No matches message */}
             {team.matches.length === 0 && (
                 <p>No matches found for this team.</p>
             )}

@@ -9,6 +9,7 @@ public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(unique = true)
     private String teamName;
     private long totalMatches;
     private long totalWins;
