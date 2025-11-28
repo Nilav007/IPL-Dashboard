@@ -1,15 +1,15 @@
 package io.anupamnilav.IPL_Dashboard.controller;
 
+import io.anupamnilav.IPL_Dashboard.model.Match;
 import io.anupamnilav.IPL_Dashboard.model.Team;
 import io.anupamnilav.IPL_Dashboard.repository.MatchRepository;
 import io.anupamnilav.IPL_Dashboard.repository.TeamRepository;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -34,5 +34,16 @@ public class TeamController {
         team.setMatches(this.matchRepository.getByTeam1OrTeam2OrderByDateDesc(teamName,teamName,pageable));
         return team;
     }
-
+    @GetMapping("/team/{teamName}/matches")
+    public List<Match> getMatches(@PathVariable String teamName, @RequestParam int year) {
+        LocalDate startDate=LocalDate.of(year,1,1);
+        LocalDate endDate=LocalDate.of(year+1,1,1);
+        return this.matchRepository.getByTeam1AndDateBetweenOrTeam2AndDateBetweenOrderByDateDesc(
+                teamName,
+                startDate,
+                endDate,
+                teamName,
+                startDate,
+                endDate);
+    }
 }
