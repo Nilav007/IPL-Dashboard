@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MatchDetailCard } from "../components/MatchDetailCard";
 import { MatchSmallCard } from "../components/MatchSmallCard";
+import './TeamPage.scss';
 
 export const TeamPage = () => {
     const [team, setTeam] = useState(null);
@@ -17,7 +18,7 @@ export const TeamPage = () => {
 
                 const nameToFetch = teamName || 'Rajasthan Royals';
                 const encodedName = encodeURIComponent(nameToFetch);
-                const response = await fetch(`/team/${encodedName}`);
+                const response = await fetch(`http://localhost:8080/team/${encodedName}`);
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch team data: ${response.status}`);
@@ -63,27 +64,31 @@ export const TeamPage = () => {
 
     return (
         <div className="TeamPage">
-            <h1>{team.teamName}</h1>
+            <div className="team-name-section">
+                <h1 className="team-name">{team.teamName}</h1>
+            </div>
 
-            {team.matches.length > 0 && (
-                <MatchDetailCard match={team.matches[0]} teamName={team.teamName} />
+            <div className="win-loss-section">Wins/Losses</div>
+
+            <div className="match-detail-section">
+                <h3>Latest Matches</h3>
+                <MatchDetailCard
+                    teamName={team.teamName}
+                    match={team.matches[0]}
+                />
+            </div>
+
+            {team.matches.slice(1).map(match =>
+                <MatchSmallCard
+                    key={match.id}
+                    teamName={team.teamName}
+                    match={match}
+                />
             )}
 
-            {team.matches.length > 1 && (
-                <div className="match-list">
-                    {team.matches.slice(1).map((match, index) => (
-                        <MatchSmallCard
-                            key={match.id || index}
-                            match={match}
-                            teamName={team.teamName}
-                        />
-                    ))}
-                </div>
-            )}
-
-            {team.matches.length === 0 && (
-                <p>No matches found for this team.</p>
-            )}
+            <div className="more-link">
+                <a href="#">More ></a>
+            </div>
         </div>
     );
 }

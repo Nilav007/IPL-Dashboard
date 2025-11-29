@@ -1,20 +1,21 @@
 import React from 'react';
-import {Link} from 'react-router-dom'
-export const MatchSmallCard = ({ match,teamName }) => {
+import { Link } from 'react-router-dom';
+import './MatchSmallCard.scss'
+export const MatchSmallCard = ({ match, teamName }) => {
     if (!match) return null;
     const otherTeam = match.team1 === teamName ? match.team2 : match.team1;
+    const otherTeamRoute = `/teams/${otherTeam}`;
+    const isMatchWon = teamName === match.matchWinner;
+
     return (
-        <div className="MatchSmallCard">
+        <div className={isMatchWon ? 'MatchSmallCard won-card' : 'MatchSmallCard lost-card'}>
             <div className="match-summary">
-                <p className="teams">vs
-                    <Link to={`/teams/${otherTeam}`}>{otherTeam}</Link>
-                </p>
+                <span className="vs"> vs</span>
+                <h1><Link to={otherTeamRoute}>{otherTeam}</Link></h1>
                 {match.matchWinner && (
-                    <p className="winner">Winner: {match.matchWinner}</p>
+                    <p className="match-result">{match.matchWinner} won by {match.resultMargin}</p>
                 )}
-                {match.date && (
-                    <p className="date">{new Date(match.date).toLocaleDateString()}</p>
-                )}
+
             </div>
         </div>
     );
