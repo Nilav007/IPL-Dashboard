@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams ,Link} from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { MatchDetailCard } from "../components/MatchDetailCard";
 import { MatchSmallCard } from "../components/MatchSmallCard";
 import './TeamPage.scss';
-import {PieChart} from 'react-minimal-pie-chart'
+import { PieChart } from 'react-minimal-pie-chart';
+
 export const TeamPage = () => {
     const [team, setTeam] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ export const TeamPage = () => {
 
                 const nameToFetch = teamName || 'Rajasthan Royals';
                 const encodedName = encodeURIComponent(nameToFetch);
-                const response = await fetch(`http://localhost:8080/team/${encodedName}`);
+                const response = await fetch(`${process.env.REACT_APP_API_ROOT_URL}/team/${encodedName}`);
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch team data: ${response.status}`);
@@ -68,12 +69,14 @@ export const TeamPage = () => {
                 <h1 className="team-name">{team.teamName}</h1>
             </div>
 
-            <div className="win-loss-section">Wins/Losses
-            <PieChart
-               data={[
-                   {title:'Losses',value:team.totalMatches-team.totalWins,color:'#a34d53'},
-                   {title:'Wins',value:team.totalWins,color:'#4da375'}
-               ]}/>
+            <div className="win-loss-section">
+                Wins/Losses
+                <PieChart
+                    data={[
+                        { title: 'Losses', value: team.totalMatches - team.totalWins, color: '#a34d53' },
+                        { title: 'Wins', value: team.totalWins, color: '#4da375' }
+                    ]}
+                />
             </div>
 
             <div className="match-detail-section">
@@ -93,8 +96,7 @@ export const TeamPage = () => {
             )}
 
             <div className="more-link">
-                <Link to={`/teams/${teamName}/matches/${process.env.REACT_APP_DATA_END_YEAR}`}>More ></Link>
-                <a href="#"></a>
+                <Link to={`/teams/${teamName}/matches/${process.env.REACT_APP_DATA_END_YEAR}`}>More &gt;</Link>
             </div>
         </div>
     );
