@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MatchSmallCard } from "../components/MatchSmallCard";
+import { YearSelector } from "../components/YearSelector";
+import './MatchPage.scss';
 
 export const MatchPage = () => {
     const [matches, setMatches] = useState([]);
@@ -14,17 +16,19 @@ export const MatchPage = () => {
                 setLoading(true);
                 setError(null);
 
-                const nameToFetch = teamName || 'Rajasthan Royals';
-                const response = await fetch(`http://localhost:8080/team/${nameToFetch}/matches?year=${year}`);
+                const encodedName = encodeURIComponent(teamName);
+                const response = await fetch(`http://localhost:8080/team/${encodedName}/matches?year=${year}`);
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch team data: ${response.status}`);
                 }
 
                 const data = await response.json();
+                console.log('Fetched matches:', data);
+                console.log('Team name from URL:', teamName);
                 setMatches(data);
             } catch (err) {
-                console.error('Error fetching team:', err);
+                console.error('Error fetching matches:', err);
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -33,15 +37,21 @@ export const MatchPage = () => {
         fetchMatches();
     }, [teamName, year]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <div className="MatchPage">Loading...</div>;
+    if (error) return <div className="MatchPage">Error: {error}</div>;
 
     return (
-        <div>
-            <h1>MatchPage</h1>
-            {matches.map((match, index) => (
-                <MatchSmallCard key={match.id || index} match={match} />
-            ))}
+        <div className="MatchPage">
+            <div className="year-selector">
+                <h3>Select Year</h3>
+                <YearSelector teamName={teamName}/>
+            </div>
+            <div>
+                <h1 className="page-heading">{teamName} matches in {year}</h1>
+                {
+                    matches.map(match => <MatchSmallCard teamName={teamName} match={match} key={match.id} />)
+                }
+            </div>
         </div>
     );
 }
